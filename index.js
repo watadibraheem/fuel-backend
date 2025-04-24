@@ -19,29 +19,19 @@ db.connect((err) => {
   if (err) return console.error("Database error:", err);
   console.log("✅ Connected to MySQL");
 });
-db.query(
-  `
-  CREATE TABLE IF NOT EXISTS abnormalF (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    driver_name VARCHAR(100),
-    plate VARCHAR(20),
-    amount INT,
-    status ENUM('pending', 'approved', 'auto-approved', 'rejected', 'done') DEFAULT 'pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    approved_at DATETIME NULL,
-    rejected_at DATETIME NULL,
-    business_name VARCHAR(100)
-  )
-`,
-  (err, result) => {
-    if (err) {
-      console.error("❌ Failed to create abnormalF table:", err);
-    } else {
-      console.log("✅ abnormalF table ready (created or already exists).");
-    }
-  }
-);
 
+app.get("/abnormalF", (req, res) => {
+  db.query(
+    "SELECT * FROM abnormalF ORDER BY created_at DESC",
+    (err, results) => {
+      if (err) {
+        console.error("Error fetching abnormalF data:", err);
+        return res.status(500).json({ error: "Server error" });
+      }
+      res.json(results);
+    }
+  );
+});
 
 // Test route
 app.get("/", (req, res) => {
