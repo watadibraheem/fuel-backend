@@ -35,13 +35,17 @@ db.connect((err) => {
 // });
 
 app.post("/abnormalF", (req, res) => {
+  console.log("🔥 POST /abnormalF hit"); // ADD THIS LINE
+
   const { driver_name, plate, amount, business_name } = req.body;
 
   if (!driver_name || !plate || !amount || !business_name) {
+    console.log("❌ Missing fields:", req.body); // ADD THIS TOO
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   const status = amount <= 200 ? "auto-approved" : "pending";
+
   const sql = `
     INSERT INTO abnormalF (driver_name, plate, amount, status, business_name)
     VALUES (?, ?, ?, ?, ?)
@@ -52,15 +56,17 @@ app.post("/abnormalF", (req, res) => {
     [driver_name, plate, amount, status, business_name],
     (err, result) => {
       if (err) {
-        console.error("Error inserting into abnormalF:", err);
+        console.error("❌ Error inserting into abnormalF:", err);
         return res.status(500).json({ error: "Database insert failed" });
       }
+      console.log("✅ Inserted successfully:", result.insertId); // NEW
       res
         .status(201)
         .json({ success: true, insertedId: result.insertId, status });
     }
   );
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
