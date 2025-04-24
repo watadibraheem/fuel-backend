@@ -21,18 +21,18 @@ db.connect((err) => {
   console.log("✅ Connected to MySQL");
 });
 
-app.get("/abnormalF", (req, res) => {
-  db.query(
-    "SELECT * FROM abnormalF ORDER BY created_at DESC",
-    (err, results) => {
-      if (err) {
-        console.error("Error fetching abnormalF data:", err);
-        return res.status(500).json({ error: "Server error" });
-      }
-      res.json(results);
-    }
-  );
-});
+// app.get("/abnormalF", (req, res) => {
+//   db.query(
+//     "SELECT * FROM abnormalF ORDER BY created_at DESC",
+//     (err, results) => {
+//       if (err) {
+//         console.error("Error fetching abnormalF data:", err);
+//         return res.status(500).json({ error: "Server error" });
+//       }
+//       res.json(results);
+//     }
+//   );
+// });
 
 app.post("/abnormalF", (req, res) => {
   const { driver_name, plate, amount, business_name } = req.body;
