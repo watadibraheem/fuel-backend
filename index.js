@@ -33,9 +33,32 @@ app.get("/abnormalF", (req, res) => {
   );
 });
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Fuel Backend is Running!");
+app.post("/abnormalF", (req, res) => {
+  const { driver_name, plate, amount, business_name } = req.body;
+
+  if (!driver_name || !plate || !amount || !business_name) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const status = amount <= 200 ? "auto-approved" : "pending";
+  const sql = `
+    INSERT INTO abnormalF (driver_name, plate, amount, status, business_name)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [driver_name, plate, amount, status, business_name],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting into abnormalF:", err);
+        return res.status(500).json({ error: "Database insert failed" });
+      }
+      res
+        .status(201)
+        .json({ success: true, insertedId: result.insertId, status });
+    }
+  );
 });
 
 const PORT = process.env.PORT || 3000;
